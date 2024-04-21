@@ -1,40 +1,44 @@
 package ru.hogwarts.school.Anna.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.Anna.exceptions.RecordNotFoundException;
 import ru.hogwarts.school.Anna.model.Student;
+import ru.hogwarts.school.Anna.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
 @Service
 public class StudentService {
-    private final Map<Long, Student> students = new HashMap<>();
-    private static long nextId = 1;
+    private final StudentRepository repository;
 
-    public Student addStudent(Student student){
-        student.setId(nextId++);
-        students.put(student.getId(), student);
-        return student;
-    }
-    public Student getStudentById(long id){
-        return students.get(id);
+    public StudentService(StudentRepository repository) {
+        this.repository = repository;
     }
 
-    public Student updateStudent(Student student){
-        if (students.containsKey(student.getId())) {
-            students.put(student.getId(), student);
-            return student;
-        }
-        return null;
+
+    public Student addStudent(Student student) {
+        return repository.save(student);
     }
-    public boolean deleteStudent(long id){
-       return students.remove(id) != null;
+
+    public Student getStudentById(long id) {
+        return repository.findById(id).orElseThrow(RecordNotFoundException::new);
+    }
+
+    public Student updateStudent(Student student) {
+        return repository.findById(student.getId())
+                .map(entity -> repository.save(student))
+                .orElse(null);
+    }
+
+    public boolean deleteStudent(long id) {
+        return repository.findById(id)
+                .map(entity -> {
+                    repository.delete(entity);
+                    return true;
+                }).orElse(false);
     }
 
     public Collection<Student> getByAge(int age) {
-        return students.values()
-                .stream()
-                .filter(s->s.getAge() == age)
-                .toList();
+        return repository.findAllByAge(age);
     }
 }
