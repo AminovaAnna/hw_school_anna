@@ -1,10 +1,9 @@
 package ru.hogwarts.school.Anna.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,6 +13,9 @@ public class Faculty {
     public Long id;
     public String name;
     public String color;
+    @OneToMany(mappedBy = "faculty")
+    @JsonManagedReference
+    private List<Student> students;
 
     public Faculty(Long id, String name, String color) {
         this.id = id;
@@ -46,6 +48,14 @@ public class Faculty {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 
     @Override

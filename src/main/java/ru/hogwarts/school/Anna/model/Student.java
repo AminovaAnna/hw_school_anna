@@ -1,20 +1,22 @@
 package ru.hogwarts.school.Anna.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.util.Objects;
 
-@Entity
+@Entity(name = "students")
 public class Student {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private int age;
+@JoinColumn(name = "faculty_id")
+@ManyToOne
+@JsonBackReference
+    private Faculty faculty;
 
 
     public Student(Long id, String name, int age) {
@@ -48,6 +50,14 @@ public class Student {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 
     @Override

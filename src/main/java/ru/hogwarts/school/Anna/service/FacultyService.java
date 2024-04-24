@@ -1,45 +1,55 @@
 package ru.hogwarts.school.Anna.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.Anna.exceptions.RecordNotFoundException;
 import ru.hogwarts.school.Anna.model.Faculty;
 import ru.hogwarts.school.Anna.model.Student;
 import ru.hogwarts.school.Anna.repository.FacultyRepository;
+import ru.hogwarts.school.Anna.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
 @Service
 public class FacultyService {
     private final FacultyRepository repository;
+    private final StudentRepository studentRepository;
 
-    public FacultyService(FacultyRepository repository) {
+    public FacultyService(FacultyRepository repository, StudentRepository studentRepository) {
         this.repository = repository;
+        this.studentRepository = studentRepository;
     }
 
-    public Faculty addFaculty(Faculty faculty){
-    return repository.save(faculty);
+    public Faculty addFaculty(Faculty faculty) {
+        return repository.save(faculty);
     }
-    public Faculty getFacultyById(long id){
+
+    public Faculty getFacultyById(long id) {
         return repository.findById(id).orElseThrow(RecordNotFoundException::new);
     }
 
-    public Faculty updateFaculty(Faculty faculty){
+    public Faculty updateFaculty(Faculty faculty) {
         return repository.findById(faculty.getId())
                 .map(entity -> repository.save(faculty))
                 .orElse(null);
     }
-    public boolean deleteFaculty(long id){
+
+    public boolean deleteFaculty(long id) {
         return repository.findById(id)
-                        .map(entity -> {
-                            repository.delete(entity);
-                            return true;
-                        }).orElse(false);
+                .map(entity -> {
+                    repository.delete(entity);
+                    return true;
+                }).orElse(false);
     }
 
-    public Collection<Faculty> getByColor(String color) {
-        return repository.findAllByColor(color);
+    public Collection<Faculty> getByColorOrName(String color, String name) {
+        return repository.findAllByColorIgnoreCaseOrNameIgnoreCase(color, name);
+    }
+
+    public Collection<Faculty> getAll() {
+        return repository.findAll();
+    }
+    public Collection<Student> getAllStudentsByFacultyId(long facultyId){
+        return studentRepository.findAllByFaculty_Id(facultyId);
     }
 }
 
