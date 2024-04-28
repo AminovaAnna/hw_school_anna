@@ -40,8 +40,9 @@ public class StudentController {
         }
         return service.getAll();
     }
-//    public Faculty getStudentFaculty(@RequestParam long studentId){
-//        return service.get(studentId).getFaculty();
-//    }
+    @GetMapping(path = "/facultyByStudent")
+    public Faculty getStudentFacultyByStudent(@RequestParam long studentId){
+        return service.getStudentById(studentId).getFaculty();
+    }
 
 }
