@@ -139,13 +139,14 @@ public class FacultyControllerTestWebMvc {
         f.setStudents(List.of(new Student(1L, "s1", 10),
         new Student(2L, "s2", 15)));
 
-        when(facultyRepository.findById(1L)).thenReturn(Optional.of(f));
+        when(studentRepository.findAllByFaculty_Id(1L)).thenReturn(List.of(f.getStudents().toArray(new Student[0]))); //не уверена в этой строчке
 
         mvc.perform(MockMvcRequestBuilders.get("/faculty/allStudents?facultyId=1"))
-
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("s1"))
                 .andExpect(jsonPath("$[0].age").value(10));
+        mvc.perform(MockMvcRequestBuilders.get("/faculty/allStudents?facultyId="))
+                .andExpect(status().is(400));
 
     }
 }

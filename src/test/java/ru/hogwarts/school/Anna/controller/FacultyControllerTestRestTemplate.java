@@ -6,9 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.Anna.model.Faculty;
+import ru.hogwarts.school.Anna.model.Student;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -72,12 +76,40 @@ public class FacultyControllerTestRestTemplate {
     void testFilter() {
 
         var f1 = template.postForEntity("/faculty", new Faculty(null, "test_name1", "test_color1"), Faculty.class).getBody();
-        var f2 =template.postForEntity("/faculty", new Faculty(null, "test_name2", "test_color2"), Faculty.class).getBody();
+        var f2 = template.postForEntity("/faculty", new Faculty(null, "test_name2", "test_color2"), Faculty.class).getBody();
         var f3 = template.postForEntity("/faculty", new Faculty(null, "test_name3", "test_color3"), Faculty.class).getBody();
-        var f4 =template.postForEntity("/faculty", new Faculty(null, "test_name4", "test_color1"), Faculty.class).getBody();
+        var f4 = template.postForEntity("/faculty", new Faculty(null, "test_name4", "test_color1"), Faculty.class).getBody();
 
         var faculties = template.getForObject("/faculty/byColorOrName?name=test_name1&color=test_color2", Faculty[].class);
-assertThat(faculties.length).isEqualTo(2);
-assertThat(faculties).containsExactlyInAnyOrder(f1, f2);
+        assertThat(faculties.length).isEqualTo(2);
+        assertThat(faculties).containsExactlyInAnyOrder(f1, f2);
+    }
+
+    @Test
+    void testGetFacultyStudents() {
+
+
+       var s1 = template.postForEntity("/student", new Student(null, "s1", 10), Student.class).getBody();
+       var s2 = template.postForEntity("/student", new Student(null, "s2", 20), Student.class).getBody();
+       var s3 = template.postForEntity("/student", new Student(null, "s3", 30), Student.class).getBody();
+
+        var f = new Faculty(null, "test_name1", "test_color1");
+        f.setStudents(List.of(s1, s2, s3));
+
+        var f1 = template.postForEntity("/faculty", f, Faculty.class).getBody();
+        System.out.println(f1);
+
+        ResponseEntity<List<Student>> result = template.exchange("/faculty/students?facultyId=" + f1.getId(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                });
+        assertThat(result.getBody()).containsExactlyInAnyOrder(
+                new Student(1L, "s1", 10),
+                new Student(2L, "s2", 20),
+                new Student(3L, "s3", 30));
+
+
+
     }
 }

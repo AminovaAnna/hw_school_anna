@@ -1,6 +1,7 @@
 package ru.hogwarts.school.Anna.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
@@ -15,7 +16,7 @@ public class Student {
     private int age;
 @JoinColumn(name = "faculty_id")
 @ManyToOne
-@JsonBackReference
+@JsonIgnore
     private Faculty faculty;
 
 
