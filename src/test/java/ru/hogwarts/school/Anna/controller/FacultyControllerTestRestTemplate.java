@@ -87,17 +87,15 @@ public class FacultyControllerTestRestTemplate {
 
     @Test
     void testGetFacultyStudents() {
-
-
-       var s1 = template.postForEntity("/student", new Student(null, "s1", 10), Student.class).getBody();
-       var s2 = template.postForEntity("/student", new Student(null, "s2", 20), Student.class).getBody();
-       var s3 = template.postForEntity("/student", new Student(null, "s3", 30), Student.class).getBody();
-
         var f = new Faculty(null, "test_name1", "test_color1");
-        f.setStudents(List.of(s1, s2, s3));
-
         var f1 = template.postForEntity("/faculty", f, Faculty.class).getBody();
-        System.out.println(f1);
+        Student newStudent = new Student(null, "s1", 10);
+        Student newStudent2 = new Student(null, "s2", 20);
+        newStudent.setFaculty(f1);
+        newStudent2.setFaculty(f1);
+
+        var s1 = template.postForEntity("/student", newStudent, Student.class).getBody();
+        var s2 = template.postForEntity("/student", newStudent2, Student.class).getBody();
 
         ResponseEntity<List<Student>> result = template.exchange("/faculty/students?facultyId=" + f1.getId(),
                 HttpMethod.GET,
@@ -106,10 +104,7 @@ public class FacultyControllerTestRestTemplate {
                 });
         assertThat(result.getBody()).containsExactlyInAnyOrder(
                 new Student(1L, "s1", 10),
-                new Student(2L, "s2", 20),
-                new Student(3L, "s3", 30));
-
-
+                new Student(2L, "s2", 20));
 
     }
 }
