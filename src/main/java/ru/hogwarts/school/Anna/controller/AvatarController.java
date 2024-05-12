@@ -11,6 +11,7 @@ import ru.hogwarts.school.Anna.service.AvatarService;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
@@ -49,5 +50,11 @@ public class AvatarController {
         headers.setContentLength(avatar.getFileSize());
         headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
         return ResponseEntity.status(200).headers(headers).body(avatar.getData());
+    }
+
+    @GetMapping()
+    public List<Avatar> getByPage(@RequestParam("page") int page,
+                                  @RequestParam("size") int size) {
+        return service.getPage(page, size);
     }
 }
