@@ -97,7 +97,7 @@ public class FacultyControllerTestRestTemplate {
         var s1 = template.postForEntity("/student", newStudent, Student.class).getBody();
         var s2 = template.postForEntity("/student", newStudent2, Student.class).getBody();
 
-        ResponseEntity<List<Student>> result = template.exchange("/faculty/students?facultyId=" + f1.getId(),
+        ResponseEntity<List<Student>> result = template.exchange("/faculty/allStudents?facultyId=" + f1.getId(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {
