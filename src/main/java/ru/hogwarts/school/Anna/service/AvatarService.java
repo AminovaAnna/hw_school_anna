@@ -1,5 +1,7 @@
 package ru.hogwarts.school.Anna.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @Service
 public class AvatarService {
+    private final static Logger logger = LoggerFactory.getLogger(AvatarService.class);
     private final AvatarRepository avatarRepository;
     private final StudentRepository studentRepository;
     private final Path avatarsDir;
@@ -43,15 +46,20 @@ public class AvatarService {
         avatar.setData(file.getBytes());
         avatar.setStudent(studentRepository.getReferenceById(studentId));
         avatar.setFilePath(filePath.toString());
+        logger.info("Avatar has been saved!");
         return avatarRepository.save(avatar);
 
 
+
     }
+
     public Avatar getById(Long id) {
+        logger.info("Avatar has been received");
         return avatarRepository.findById(id).orElse(new Avatar());
     }
 
-    public List<Avatar> getPage(int pageNumber, int pageSize){
+    public List<Avatar> getPage(int pageNumber, int pageSize) {
+        logger.info("Query has been completed");
         return avatarRepository.findAll(PageRequest.of(pageNumber, pageSize)).toList();
     }
 }

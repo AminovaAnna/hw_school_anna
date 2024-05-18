@@ -10,5 +10,5 @@ CREATE TABLE human (
     name text PRIMARY KEY,
     age SMALLINT,
     driver_license boolean,
-    car_id SERIAL references car (id)
+    car_id SERIAL references car_id
 );
