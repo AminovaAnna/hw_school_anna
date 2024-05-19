@@ -10,6 +10,10 @@ import ru.hogwarts.school.Anna.repository.FacultyRepository;
 import ru.hogwarts.school.Anna.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class FacultyService {
@@ -70,6 +74,19 @@ public class FacultyService {
     public Collection<Student> getAllStudentsByFacultyId(long facultyId) {
         logger.info("Students requested by faculty");
         return studentRepository.findAllByFaculty_Id(facultyId);
+    }
+
+    public List<String> getLongestName(){
+        int maxLength = repository.findAll().stream()
+                .map(Faculty::getName)
+                .map(String::length)
+                .max(Integer::compareTo)
+                .orElse(0);
+
+        return repository.findAll().stream()
+                .map(Faculty::getName)
+                .filter(name -> name.length() == maxLength)
+                .collect(Collectors.toList());
     }
 }
 

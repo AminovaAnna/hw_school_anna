@@ -7,6 +7,7 @@ import ru.hogwarts.school.Anna.model.Student;
 import ru.hogwarts.school.Anna.service.FacultyService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/faculty")
@@ -49,6 +50,11 @@ public class FacultyController {
     @GetMapping("/allStudents")
     public Collection<Student> getAllStudentsByFacultyId(@RequestParam long facultyId) {
         return service.getAllStudentsByFacultyId(facultyId);
+    }
+
+    @GetMapping("/longestName")
+    public List<String> getLongestName() {
+        return service.getLongestName();
     }
 
 }

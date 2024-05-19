@@ -8,6 +8,7 @@ import ru.hogwarts.school.Anna.model.Student;
 import ru.hogwarts.school.Anna.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -73,4 +74,20 @@ public class StudentService {
         logger.info("Last five students received");
         return repository.getLastFive();
     }
+    public Collection<String> getNameStartsWithA(){
+        return repository.findAll().stream()      //findAllByFacultyId??
+                .map(Student::getName)
+                .map(String::toUpperCase)
+                .filter(name->name.startsWith("A"))
+                .sorted()
+                .toList();
+    }
+
+    public double getAverageAge(){
+        return repository.findAll().stream()
+                .mapToDouble(Student::getAge)
+                .average()
+                .orElse(0);
+    }
+
 }
